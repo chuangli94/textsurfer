@@ -6,7 +6,7 @@ var gmail = require("../public/javascripts/gmail");
 var googleConfig = {
     clientID: '199448248265-rf0m7guf90uoab3nqn6b6lf5oqaeb6ad.apps.googleusercontent.com',
     clientSecret: 'QYsKt7UfL5eA4XvR2hMQsO0O',
-    redirectURL: 'http://localhost:5000/auth'
+    redirectURL: 'https://textsurfer.herokuapp.com/auth'
 };
 var oauth2Client = new google.auth.OAuth2(googleConfig.clientID, googleConfig.clientSecret, googleConfig.redirectURL);
 var auth = false;
