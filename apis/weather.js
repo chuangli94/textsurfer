@@ -35,7 +35,7 @@ var createMsg = function(res) {
     weather += KtoF(res.main.temp) + " (hi: " + KtoF(res.main.temp_max) + ", lo: " + KtoF(res.main.temp_min) + ")<br>";
     weather += "Humidity: " + res.main.humidity;
     if (res.rain != null) weather += ", Rain(3h): " + res.rain["3h"] + "<br>"
-    console.log(weather);
+    return weather;
 };
 
 util.inherits(getWeather, EventEmitter);
