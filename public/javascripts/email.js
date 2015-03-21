@@ -1,5 +1,6 @@
 var News = require('./../../apis/news'),
-    Directions = require('./../../apis/directions');
+    Directions = require('./../../apis/directions'),
+    Weather = require('./../../apis/weather');
 
 var defaultEmail = function (body) {
     var email_lines = [];
@@ -19,16 +20,19 @@ var defaultEmail = function (body) {
 }
 
 var generate = function(command, emailSender) {
+    command = command.replace(/['"]+/g, ''); // remove double quotes
     var r;
     if (command.indexOf("news") > -1) {
         r = new News("");
     } else if (command.indexOf("dir") > -1) {
-        command = command.replace(/['"]+/g, ''); // remove double quotes
         if (command.indexOf("b:") < 0) command = command + "b: driving";
         var from = command.slice(command.indexOf("f:")+2, command.indexOf("t:")).trim();
         var to = command.slice(command.indexOf("t:")+2, command.indexOf("b:")).trim();
         var by = command.slice(command.indexOf("b:")+2).trim();
         r = new Directions(from, to, by);
+    } else if (command.indexOf("weather") > -1) {
+        var location = command.slice(command.indexOf("weather") + 7).trim();
+        r = new Weather(location);
     } else {
         r = "";
     }
