@@ -10,7 +10,6 @@ var defaultEmail = function (body) {
     email_lines.push('MIME-Version: 1.0');
     email_lines.push("");
     email_lines.push(body);
-//email_lines.push("<b>And the bold text goes here</b>");
 
     var email = email_lines.join("\r\n").trim();
 
@@ -23,7 +22,11 @@ var generate = function(command, emailSender) {
     command = command.replace(/['"]+/g, ''); // remove double quotes
     var r;
     if (command.indexOf("news") > -1) {
-        r = new News("");
+        var story;
+        if (command.indexOf("popular") > -1) story = "Most Popular";
+        else if (command.indexOf("congress") > -1) story = "Congress";
+        else story = "";
+        r = new News(story);
     } else if (command.indexOf("dir") > -1) {
         if (command.indexOf("b:") < 0) command = command + "b: driving";
         var from = command.slice(command.indexOf("f:")+2, command.indexOf("t:")).trim();

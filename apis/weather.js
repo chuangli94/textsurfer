@@ -13,7 +13,7 @@ var KtoC = function(K) {
 };
 
 var KtoF = function(K) {
-    return 32 + (KtoC(K) * 9 / 5);
+    return (32 + (KtoC(K) * 9 / 5)).toFixed(2);
 };
 
 var req = function(location) {
@@ -32,9 +32,9 @@ var getWeather = function(location) {
 
 var createMsg = function(res) {
     var weather = res.weather[0].main + ", " + res.weather[0].description + "<br>";
-    weather += KtoF(res.main.temp) + " (hi: " + KtoF(res.main.temp_max) + ", lo: " + KtoF(res.main.temp_min) + ")<br>";
-    weather += "Humidity: " + res.main.humidity;
-    if (res.rain != null) weather += ", Rain(3h): " + res.rain["3h"] + "<br>"
+    weather += "Temperature: " + KtoF(res.main.temp) + " (hi: " + KtoF(res.main.temp_max) + ", lo: " + KtoF(res.main.temp_min) + ")<br>";
+    weather += "Humidity: " + res.main.humidity + "<br>";
+    if (res.rain != null) weather += "Rain(3h): " + res.rain["3h"] + "<br>"
     return weather;
 };
 
