@@ -6,6 +6,7 @@ var gmailClass = google.gmail('v1');
 var emailGenerator = require('./email');
 
 var oAuth2Client;
+var expire_time;
 var mailChecker;
 var frequency = 15000;
 var label_id = "Label_2";
@@ -50,8 +51,22 @@ var markRead = function (email_id) {
             console.log(err);
     });
 };
+var refreshToken  = function() {
+    oAuth2Client.refreshAccessToken(function(err, tokens) {
+        if (err) {
+            console.log("Error refreshing tokens: " + err);
+            clearInterval(mailChecker);
+            return;
+        }
+        oAuth2Client.setCredentials(tokens);
+    });
+};
+
 var getEmails = function () {
     console.log("Checking emails...");
+    if (Date.now() >= expire_time) {
+        refreshToken();
+    }
     mailChecker = setInterval(function () {
         gmailClass.users.messages.list({
             auth: oAuth2Client,
@@ -61,6 +76,7 @@ var getEmails = function () {
         }, function (err, res) {
             if (err) {
                 console.log(err);
+                if (err.status === 401) refreshToken();
             } else {
                 console.log("...");
                 var emails = res.messages;
@@ -105,8 +121,9 @@ var sendEmail = function (data) {
 };
 
 
-var listen = function (client) {
+var listen = function (client, expire) {
     oAuth2Client = client;
+    expire_time = expire;
     getEmails();
 }
 

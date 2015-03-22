@@ -35,7 +35,7 @@ router.get('/', function(req, res, next) {
 
 router.get('/auth', function(req, res, next) {
     var code = req.query.code;
-    if (code)
+    if (code && !auth)
     {
         oauth2Client.getToken(code, function(err, tokens) {
             if (err) {
@@ -51,10 +51,10 @@ router.get('/auth', function(req, res, next) {
                 access_token: tokens.access_token,
                 refresh_token: tokens.refresh_token
             });
+            gmail.listen(oauth2Client, tokens.expiry_date);
             auth = true;
         });
     }
-    gmail.listen(oauth2Client);
     res.redirect('/');
 });
 
