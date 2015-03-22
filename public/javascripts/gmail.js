@@ -78,7 +78,6 @@ var getEmails = function () {
                 console.log(err);
                 if (err.status === 401) refreshToken();
             } else {
-                console.log("...");
                 var emails = res.messages;
                 if (emails == null) {
                     return;
