@@ -53,6 +53,7 @@ var markRead = function (email_id) {
 };
 
 var refreshToken  = function() {
+    console.log("Refreshing tokens");
     oAuth2Client.refreshAccessToken(function(err, tokens) {
         if (err) {
             console.log("Error refreshing tokens: " + err);
@@ -61,6 +62,7 @@ var refreshToken  = function() {
         }
         oAuth2Client.setCredentials(tokens);
         expire_time = tokens.expiry_date;
+        console.log("Tokens refreshed, will expire at: " + expire_time)
     });
 };
 
@@ -88,6 +90,7 @@ var getEmails = function () {
             }
         });
         if (Date.now() >= expire_time) {
+            console.log("Token has expried");
             refreshToken();
         }
     }, frequency);
@@ -125,6 +128,7 @@ var sendEmail = function (data) {
 var listen = function (client, expire) {
     oAuth2Client = client;
     expire_time = expire;
+    console.log("Tokens will expire at: " + expire_time)
     getEmails();
 }
 
