@@ -51,6 +51,7 @@ var markRead = function (email_id) {
             console.log(err);
     });
 };
+
 var refreshToken  = function() {
     oAuth2Client.refreshAccessToken(function(err, tokens) {
         if (err) {
@@ -59,14 +60,12 @@ var refreshToken  = function() {
             return;
         }
         oAuth2Client.setCredentials(tokens);
+        expire_time = tokens.expiry_date;
     });
 };
 
 var getEmails = function () {
     console.log("Checking emails...");
-    if (Date.now() >= expire_time) {
-        refreshToken();
-    }
     mailChecker = setInterval(function () {
         gmailClass.users.messages.list({
             auth: oAuth2Client,
@@ -88,6 +87,9 @@ var getEmails = function () {
                 }
             }
         });
+        if (Date.now() >= expire_time) {
+            refreshToken();
+        }
     }, frequency);
 };
 var getLabel = function () {
