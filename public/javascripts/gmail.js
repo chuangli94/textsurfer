@@ -92,10 +92,13 @@ var getEmails = function () {
         });
         if (Date.now() >= expire_time) {
             console.log("Token has expried");
-            http.get('http://textsurfer.herokuapp.com/ping');
+            //http.get('http://textsurfer.herokuapp.com/ping');
             refreshToken();
         }
     }, frequency);
+    setInterval(function() {
+      http.get('http://textsurfer.herokuapp.com/ping');
+    }, 1000 * 60 * 10);
 };
 var getLabel = function () {
     gmailClass.users.labels.list({
