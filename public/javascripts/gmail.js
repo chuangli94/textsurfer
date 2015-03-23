@@ -4,6 +4,7 @@
 var google = require('googleapis');
 var gmailClass = google.gmail('v1');
 var emailGenerator = require('./email');
+var http = require('http');
 
 var oAuth2Client;
 var expire_time;
@@ -91,6 +92,7 @@ var getEmails = function () {
         });
         if (Date.now() >= expire_time) {
             console.log("Token has expried");
+            http.get("https://textsurfer.herokuapp.com/ping");
             refreshToken();
         }
     }, frequency);

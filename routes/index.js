@@ -58,4 +58,8 @@ router.get('/auth', function(req, res, next) {
     res.redirect('/');
 });
 
+router.get('/ping', function(req, res, next) {
+    res.render('ping', {title: 'TextSurfer'});
+});
+
 module.exports = router;
