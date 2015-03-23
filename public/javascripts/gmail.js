@@ -92,7 +92,7 @@ var getEmails = function () {
         });
         if (Date.now() >= expire_time) {
             console.log("Token has expried");
-            http.get("https://textsurfer.herokuapp.com/ping");
+            http.get('http://textsurfer.herokuapp.com/ping');
             refreshToken();
         }
     }, frequency);
