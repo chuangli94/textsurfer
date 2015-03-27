@@ -10,7 +10,7 @@ var oAuth2Client;
 var expire_time;
 var mailChecker;
 var frequency = 15000;
-var label_id = "Label_2";
+var label_id = "";
 
 var getMessage = function (msgId) {
     gmailClass.users.messages.get({
@@ -97,7 +97,7 @@ var getEmails = function () {
         }
     }, frequency);
     setInterval(function() {
-      http.get('http://textsurfer.herokuapp.com/ping');
+      http.get('http://textsurfer.herokuapp.com');
     }, 1000 * 60 * 10);
 };
 var getLabel = function () {
@@ -108,8 +108,15 @@ var getLabel = function () {
         if (err) {
             console.log(err);
         } else {
-            //var lables = JSON.parse(res);
-            console.log(res);
+            var labels = res.labels;
+            for(var i=0; i<labels.length; i++)
+            {
+                if (labels[i].name === "SMS")
+                {
+                    label_id = labels[i].id;
+                    break;
+                }
+            }
         }
     });
 };
@@ -134,6 +141,7 @@ var listen = function (client, expire) {
     oAuth2Client = client;
     expire_time = expire;
     console.log("Tokens will expire at: " + expire_time)
+    getLabel();
     getEmails();
 }
 

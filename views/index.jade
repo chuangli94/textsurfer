@@ -1,6 +1,9 @@
-extends layout
 
+extends layout
+block header
 block content
-  h1= title
   p Welcome to #{title}
   p This is an app that texts you the answer to everything
+
+  form(action="/auth")
+    button START
