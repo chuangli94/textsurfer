@@ -13,6 +13,7 @@ router.get('/auth', function(req, res, next) {
     {
         var url = oauth.authenticate();
         res.redirect(url);
+        return;
     }
     oauth.start(code);
     res.redirect('/thankyou');

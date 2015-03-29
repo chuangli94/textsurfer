@@ -17,7 +17,8 @@ var getMessage = function (msgId) {
         auth: oAuth2Client,
         userId: "me",
         id: msgId,
-        format: "minimal"
+        format: "metadata",
+        fields: "payload, snippet"
     }, function (err, res) {
         if (err) {
             console.log(err);
@@ -29,7 +30,19 @@ var getMessage = function (msgId) {
                 clearInterval(mailChecker);
                 return;
             }
-            emailGenerator.generate(content, sendEmail);
+            var to;
+            var headers = res.payload.headers;
+            for(var i=0; i<headers.length; i++) {
+                if (headers[i].name === "From") {
+                    to = headers[i].value;
+                    break;
+                }
+            }
+            var info = {
+                snippet: content,
+                To: to
+            };
+            emailGenerator.generate(info, sendEmail);
         }
     });
 

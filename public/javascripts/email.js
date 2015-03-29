@@ -2,11 +2,11 @@ var News = require('./../../apis/news'),
     Directions = require('./../../apis/directions'),
     Weather = require('./../../apis/weather');
 
-var defaultEmail = function (body) {
+var defaultEmail = function (to, body) {
     var email_lines = [];
-    email_lines.push("From: \"PaulFrank\" <chuang.li94@gmail.com>");
+    email_lines.push("From: me");
     email_lines.push("To: 7542132256@tmomail.net");
-    email_lines.push('Content-type: text/html;charset=iso-8859-1');
+    email_lines.push('Content-type: text/html');
     email_lines.push('MIME-Version: 1.0');
     email_lines.push("");
     email_lines.push(body);
@@ -18,8 +18,8 @@ var defaultEmail = function (body) {
     return base64EncodedEmail;
 }
 
-var generate = function(command, emailSender) {
-    command = command.replace(/['"]+/g, ''); // remove double quotes
+var generate = function(info, emailSender) {
+    var command = info.snippet.replace(/['"]+/g, ''); // remove double quotes
     var r;
     if (command.indexOf("news") > -1) {
         var story;
@@ -41,7 +41,7 @@ var generate = function(command, emailSender) {
     }
     r.on('data', function(data) {
         console.log("Ready to send email");
-        emailSender(defaultEmail(data));
+        emailSender(defaultEmail(info.To, data));
     });
 };
 
