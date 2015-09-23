@@ -1,5 +1,6 @@
 html {
-    background: url(../images/Superhero-dreams.jpg) no-repeat center center fixed;
+    background: url(../images/leap.jpg);
+    background-size: 33.33%
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -27,6 +28,7 @@ a {
 }
 
 #page-wrap {
+    display: none;
     width: 400px;
     margin: 10px;
     padding: 20px;

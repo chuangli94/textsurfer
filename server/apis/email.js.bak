@@ -1,0 +1,172 @@
+var readline = require('readline');
+var request = require("request");
+var google = require('googleapis');
+var gmailClass = google.gmail('v1');
+
+var OAuth2Client = google.auth.OAuth2;
+
+var CLIENT_ID = '199448248265-rf0m7guf90uoab3nqn6b6lf5oqaeb6ad.apps.googleusercontent.com';
+var CLIENT_SECRET = 'QYsKt7UfL5eA4XvR2hMQsO0O';
+var REDIRECT_URL = 'https://www.example.com/oauth2callback';
+
+var oAuth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
+
+var rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+function getAccessToken(oauth2Client, callback) {
+    // generate consent page url
+    var url = oauth2Client.generateAuthUrl({
+        access_type: 'offline', // will return a refresh token
+        scope: [
+          'https://mail.google.com', 
+          'https://www.googleapis.com/auth/gmail.modify' ] // can be a space-delimited string or an array of scopes
+    });
+    console.log('Visit the url: ', url);
+    request.get(url, function(err, response, body) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(response);
+            console.log(body);
+            oauth2Client.getToken(code, function(err, tokens) {
+                 //set tokens to the client
+                 // TODO: tokens should be set by OAuth2 client.
+                oauth2Client.setCredentials(tokens);
+                callback();
+            });
+        }
+    });
+    /*
+    rl.question('Enter the code here:', function(code) {
+        // request access token
+        oauth2Client.getToken(code, function(err, tokens) {
+            // set tokens to the client
+            // TODO: tokens should be set by OAuth2 client.
+            oauth2Client.setCredentials(tokens);
+            callback();
+        });
+    });*/
+}
+
+
+var email_lines = [];
+email_lines.push("From: \"PaulFrank\" <chuang.li94@gmail.com>");
+email_lines.push("To: 7542132256@tmomail.net");
+email_lines.push('Content-type: text/html;charset=iso-8859-1');
+email_lines.push('MIME-Version: 1.0');
+email_lines.push("Subject:");
+email_lines.push("");
+email_lines.push("And the body text goes here");
+//email_lines.push("<b>And the bold text goes here</b>");
+
+var email =email_lines.join("\r\n").trim();
+
+var base64EncodedEmail = new Buffer(email).toString('base64');
+var mailChecker;
+var label_id = "Label_2";
+
+var getMessage = function(msgId) {
+    gmailClass.users.messages.get({
+        auth: oAuth2Client,
+        userId: "me",
+        id: msgId,
+        format: "minimal"
+    }, function(err, res) {
+        if (err) {
+            console.log(err);
+        } else {
+            var content = JSON.stringify(res.snippet);
+            console.log("Retrieved email " + msgId + " successfulling, email: " + content);
+            if (content.indexOf("STOP") > -1)
+            {
+                console.log("Received command to stop");
+                clearInterval(mailChecker);
+            }
+            return content;
+        }
+    });
+
+};
+var sendResponse = function(email_id) {
+    console.log("Processing Email ID: " + email_id);
+    var message = getMessage(email_id);
+    sendEmail();
+    markRead(email_id);
+};
+var markRead = function(email_id) {
+    gmailClass.users.messages.modify({
+        auth: oAuth2Client,
+        userId: "me",
+        id: email_id,
+        resource:
+        {
+            "removeLabelIds": ["UNREAD"]
+        }
+    }, function (err, res) {
+        if (err)
+            console.log(err);
+    });
+};
+
+var getEmails = function() {
+    mailChecker = setInterval(function () {
+        gmailClass.users.messages.list({
+            auth: oAuth2Client,
+            userId: "me",
+            labelIds: label_id,
+            q: "is:unread"
+        }, function (err, res) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log("Retrieval successful!" )
+                var emails = res.messages;
+                if (emails == null) {
+                    console.log("No more unread messages!!");
+                    return;
+                }
+                for (var i=0; i<emails.length; i++) {
+                    var email_id = emails[i].id;
+                    sendResponse(email_id);
+                }
+            }
+        });
+    }, 5000);
+};
+
+
+var getLabel = function() {
+    gmailClass.users.labels.list({
+        auth: oAuth2Client,
+        userId: "me"
+    }, function(err, res) {
+        if (err) {
+            console.log(err);
+        }else {
+            //var lables = JSON.parse(res);
+            console.log(res);
+        }
+    });
+};
+
+function sendEmail() {
+    gmailClass.users.messages.send({
+        auth: oAuth2Client,
+        userId: "me",
+        resource:
+        {
+            raw: base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_')
+        }
+    }, function(err, results){
+            if(err)
+                console.log("Sending Email Failed: " + err);
+            else
+                console.log("Email successfully sent " + results);
+    });
+};
+
+// retrieve an access token
+getAccessToken(oAuth2Client, function() {console.log("YEAH");});
