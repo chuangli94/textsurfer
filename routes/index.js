@@ -4,7 +4,7 @@ var oauth = require("../public/javascripts/oauth");
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    res.render('index', {title: 'TextSurfer'});
+    res.render('landing', {title: 'TextSurfer'});
 });
 
 router.get('/auth', function(req, res, next) {

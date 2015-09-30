@@ -10,7 +10,7 @@ var oAuth2Client;
 var expire_time;
 var mailChecker;
 var frequency = 15000;
-var label_id = "";
+var label_id = "SMS";
 
 var getMessage = function (msgId) {
     gmailClass.users.messages.get({

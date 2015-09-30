@@ -1,11 +1,11 @@
-var News = require('news'),
-    Directions = require('directions'),
-    Weather = require('weather');
+var News = require('./news'),
+    Directions = require('./directions'),
+    Weather = require('./weather');
 
 var defaultEmail = function (to, body) {
     var email_lines = [];
     email_lines.push("From: me");
-    email_lines.push("To: 7542132256@tmomail.net");
+    email_lines.push("To: 5197215399@fido.ca");
     email_lines.push('Content-type: text/html');
     email_lines.push('MIME-Version: 1.0');
     email_lines.push("");
